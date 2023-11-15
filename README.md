@@ -2,6 +2,8 @@
 
 ![CI](https://github.com/EvertonCa/SimpleBank/actions/workflows/ci.yml/badge.svg)
 
+THIS REPOSITORY IS STILL UNDER DEVELOPMENT. NOT ALL FEATURES ARE IMPLEMENTED YET.
+
 This repository is a Go server built for a simple bank as learning exercise. It will provide APIs for the frontend to do following things:
 
 1. Create and manage bank accounts, which are composed of owner’s name, balance, and currency.
