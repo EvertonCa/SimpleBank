@@ -31,7 +31,10 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	}
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("currency", validCurrency)
+		err := v.RegisterValidation("currency", validCurrency)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// add routes to router
@@ -46,6 +49,7 @@ func (server *Server) setupRouter() {
 	// routes without authorization
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
+	router.POST("/tokens/renew_access", server.renewAccessToken)
 
 	// routes with authorization
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
