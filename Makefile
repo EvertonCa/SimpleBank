@@ -24,7 +24,7 @@ sqlc:
 	sqlc generate
 
 test:
-	go test -v -cover ./...
+	go test -v -cover -short ./...
 
 server:
 	go run main.go
@@ -40,8 +40,11 @@ proto:
 	--openapiv2_out=doc/swagger --openapiv2_opt=allow_merge=true,merge_file_name=simple_bank \
 	proto/*.proto
 
+redis:
+	docker run --name redis -p 6379:6379 -d redis:7.0-alpine
+
 evans:
 	evans --host localhost --port 9090 -r repl
 
-.PHONY: postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc server mock proto evans
+.PHONY: postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc server mock proto evans redis
 
