@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	db "github.com/EvertonCa/SimpleBank/db/sqlc"
 	"github.com/EvertonCa/SimpleBank/util"
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
