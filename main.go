@@ -91,7 +91,7 @@ func runGrpcServer(config util.Config, store db.Store, taskDistributor worker.Ta
 	pb.RegisterSimpleBankServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
-	listener, err := net.Listen("tcp", config.GrpcServerAddress)
+	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create listener: ")
 	}

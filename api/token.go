@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	db "github.com/EvertonCa/SimpleBank/db/sqlc"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -66,6 +67,7 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		refreshPayload.Username,
+		refreshPayload.Role,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {

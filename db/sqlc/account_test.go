@@ -11,6 +11,7 @@ import (
 
 func createRandomAccount(t *testing.T) Account {
 	user := createRandomUser(t)
+
 	arg := CreateAccountParams{
 		Owner:    user.Username,
 		Balance:  util.RandomMoney(),
@@ -18,7 +19,6 @@ func createRandomAccount(t *testing.T) Account {
 	}
 
 	account, err := testStore.CreateAccount(context.Background(), arg)
-
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 
@@ -39,14 +39,13 @@ func TestCreateAccount(t *testing.T) {
 func TestGetAccount(t *testing.T) {
 	account1 := createRandomAccount(t)
 	account2, err := testStore.GetAccount(context.Background(), account1.ID)
-
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 
 	require.Equal(t, account1.ID, account2.ID)
+	require.Equal(t, account1.Owner, account2.Owner)
 	require.Equal(t, account1.Balance, account2.Balance)
 	require.Equal(t, account1.Currency, account2.Currency)
-	require.Equal(t, account1.Owner, account2.Owner)
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
 }
 
@@ -63,19 +62,19 @@ func TestUpdateAccount(t *testing.T) {
 	require.NotEmpty(t, account2)
 
 	require.Equal(t, account1.ID, account2.ID)
+	require.Equal(t, account1.Owner, account2.Owner)
 	require.Equal(t, arg.Balance, account2.Balance)
 	require.Equal(t, account1.Currency, account2.Currency)
-	require.Equal(t, account1.Owner, account2.Owner)
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
 }
 
 func TestDeleteAccount(t *testing.T) {
 	account1 := createRandomAccount(t)
-
 	err := testStore.DeleteAccount(context.Background(), account1.ID)
 	require.NoError(t, err)
 
 	account2, err := testStore.GetAccount(context.Background(), account1.ID)
+	require.Error(t, err)
 	require.EqualError(t, err, ErrRecordNotFound.Error())
 	require.Empty(t, account2)
 }
