@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"github.com/EvertonCa/SimpleBank/mail"
 	"github.com/EvertonCa/SimpleBank/worker"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/hibiken/asynq"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -30,29 +30,28 @@ import (
 
 func main() {
 	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal().Err(err).Msg("cannot load config")
+	}
 
 	if config.Environment == "development" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
+	connPool, err := pgxpool.New(context.Background(), config.DBSource)
 	if err != nil {
-		log.Fatal().Err(err).Msg("cannot load config:")
-	}
-	conn, err := sql.Open(config.DBDriver, config.DBSource)
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot connect to db:")
+		log.Fatal().Err(err).Msg("cannot connect to db")
 	}
 
 	runDBMigration(config.MigrationURL, config.DBSource)
 
-	store := db.NewStore(conn)
+	store := db.NewStore(connPool)
 
 	redisOpt := asynq.RedisClientOpt{
 		Addr: config.RedisAddress,
 	}
 
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
-
 	go runTaskProcessor(config, redisOpt, store)
 	go runGatewayServer(config, store, taskDistributor)
 	runGrpcServer(config, store, taskDistributor)

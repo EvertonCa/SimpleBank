@@ -14,6 +14,7 @@ import (
 	"github.com/EvertonCa/SimpleBank/util"
 	"github.com/EvertonCa/SimpleBank/worker"
 	mockwk "github.com/EvertonCa/SimpleBank/worker/mock"
+	_ "github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
